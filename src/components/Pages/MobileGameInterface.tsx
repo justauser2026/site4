@@ -626,177 +626,81 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
         </div>
 
         <div className={`pixel-room room-${gameState.currentRoom} h-full relative`}>
-            <button
-              onClick={onBack}
-              className={`absolute left-0 p-2 rounded-full transition-all duration-200 hover:scale-110 ${
-                isDark 
-                  ? 'hover:bg-slate-800 text-white' 
-                  : 'hover:bg-emerald-100 text-emerald-900'
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            
-            {/* Título centralizado */}
-            <h1 className={`text-lg font-bold transition-colors duration-300 ${
+          {/* Room Background */}
+          <div className={`w-full h-full flex items-center justify-center transition-colors duration-300 ${
+            isDark ? 'bg-slate-800' : 'bg-emerald-100'
+          }`}>
+            <div className={`text-center transition-colors duration-300 ${
               isDark ? 'text-white' : 'text-emerald-900'
             }`}>
-              Dream Story
-            </h1>
-          </div>
-        </div>
-      </header>
-
-
-      {/* Stats Bar */}
-      <div className={`px-4 py-3 border-b transition-colors duration-300 ${
-        isDark 
-          ? 'bg-slate-900/50 border-slate-800' 
-          : 'bg-emerald-50/50 border-emerald-200/50'
-      }`}>
-        <div className="grid grid-cols-4 gap-1">
-          {/* Energy */}
-          <div className="text-center">
-            <div className={`text-[13px] font-medium mb-0.5 transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-emerald-900'
-            }`}>⚡ Energia</div>
-            <div className={`rounded-full h-1 transition-colors duration-300 ${
-              isDark ? 'bg-slate-800' : 'bg-emerald-200/50'
-            }`}>
-              <div
-                className="bg-yellow-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${gameState.energy}%` }}
-              />
+              <h2 className="text-2xl font-bold mb-4">{getRoomName(gameState.currentRoom)}</h2>
+              <p className="text-sm opacity-70">Interaja com os objetos do ambiente</p>
             </div>
-            <div className={`text-[15px] mt-0.5 transition-colors duration-300 ${
-              isDark ? 'text-slate-400' : 'text-emerald-700'
-            }`}>{Math.round(gameState.energy)}%</div>
           </div>
 
-          {/* Social */}
-          <div className="text-center">
-            <div className={`text-[13px] font-medium mb-0.5 transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-emerald-900'
-            }`}>👥 Social</div>
-            <div className={`rounded-full h-1 transition-colors duration-300 ${
-              isDark ? 'bg-slate-800' : 'bg-emerald-200/50'
-            }`}>
-              <div
-                className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${gameState.social}%` }}
-              />
-            </div>
-            <div className={`text-[15px] mt-0.5 transition-colors duration-300 ${
-              isDark ? 'text-slate-400' : 'text-emerald-700'
-            }`}>{Math.round(gameState.social)}%</div>
-          </div>
+          {/* Interactive Objects */}
+          {gameState.currentRoom === 'bedroom' && (
+            <>
+              <button
+                onClick={() => performAction('sleep', 'bed')}
+                className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/80 hover:bg-blue-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                💤 Dormir
+              </button>
+            </>
+          )}
 
-          {/* Health */}
-          <div className="text-center">
-            <div className={`text-[13px] font-medium mb-0.5 transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-emerald-900'
-            }`}>❤️ Saúde</div>
-            <div className={`rounded-full h-1 transition-colors duration-300 ${
-              isDark ? 'bg-slate-800' : 'bg-emerald-200/50'
-            }`}>
-              <div
-                className="bg-red-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${gameState.health}%` }}
-              />
-            </div>
-            <div className={`text-[15px] mt-0.5 transition-colors duration-300 ${
-              isDark ? 'text-slate-400' : 'text-emerald-700'
-            }`}>{Math.round(gameState.health)}%</div>
-          </div>
+          {gameState.currentRoom === 'kitchen' && (
+            <>
+              <button
+                onClick={() => performAction('eat', 'food')}
+                className="absolute bottom-20 left-1/4 transform -translate-x-1/2 bg-green-500/80 hover:bg-green-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                🍽️ Comer
+              </button>
+              <button
+                onClick={() => performAction('drinkWater', 'water')}
+                className="absolute bottom-20 right-1/4 transform translate-x-1/2 bg-cyan-500/80 hover:bg-cyan-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                💧 Beber Água
+              </button>
+            </>
+          )}
 
-          {/* Productivity */}
-          <div className="text-center">
-            <div className={`text-[13px] font-medium mb-0.5 transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-emerald-900'
-            }`}>📈 Produção</div>
-            <div className={`rounded-full h-1 transition-colors duration-300 ${
-              isDark ? 'bg-slate-800' : 'bg-emerald-200/50'
-            }`}>
-              <div
-                className="bg-purple-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${gameState.productivity}%` }}
-              />
-            </div>
-            <div className={`text-[15px] mt-0.5 transition-colors duration-300 ${
-              isDark ? 'text-slate-400' : 'text-emerald-700'
-            }`}>{Math.round(gameState.productivity)}%</div>
-          </div>
+          {gameState.currentRoom === 'gym' && (
+            <>
+              <button
+                onClick={() => performAction('exercise', 'equipment')}
+                className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-red-500/80 hover:bg-red-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                🏋️ Exercitar
+              </button>
+            </>
+          )}
+
+          {gameState.currentRoom === 'living' && (
+            <>
+              <button
+                onClick={() => performAction('relax', 'sofa')}
+                className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-purple-500/80 hover:bg-purple-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                🛋️ Relaxar
+              </button>
+            </>
+          )}
+
+          {gameState.currentRoom === 'bathroom' && (
+            <>
+              <button
+                onClick={() => performAction('shower', 'shower')}
+                className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-indigo-500/80 hover:bg-indigo-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+              >
+                🚿 Tomar Banho
+              </button>
+            </>
+          )}
         </div>
       </div>
-
-      {/* Game Area */}
-      <div className="relative h-[75vh] overflow-hidden pixel-game-container">
-        {/* Room Name - Top Center */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
-          <div className={`px-4 py-2 rounded-xl backdrop-blur-sm border transition-all duration-300 shadow-lg ${
-            isDark 
-              ? 'bg-slate-900/90 border-slate-700 text-white' 
-              : 'bg-white/95 border-emerald-300/60 text-emerald-900 shadow-emerald-500/10'
-          }`}>
-            <span className="text-lg font-bold">{getRoomName(gameState.currentRoom)}</span>
-          </div>
-        </div>
-
-        {/* Left Arrow - Previous Room */}
-        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-30">
-          <button
-            onClick={goToPreviousRoom}
-            className={`p-3 rounded-full backdrop-blur-sm border-2 transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg ${
-              isDark 
-                ? 'bg-slate-800/80 border-slate-600 hover:bg-slate-700/90 text-white hover:border-slate-500' 
-                : 'bg-white/90 border-emerald-300 hover:bg-emerald-50/90 text-emerald-700 hover:border-emerald-400'
-            }`}
-            title="Cômodo anterior"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Right Arrow - Next Room */}
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-30">
-          <button
-            onClick={goToNextRoom}
-            className={`p-3 rounded-full backdrop-blur-sm border-2 transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg ${
-              isDark 
-                ? 'bg-slate-800/80 border-slate-600 hover:bg-slate-700/90 text-white hover:border-slate-500' 
-                : 'bg-white/90 border-emerald-300 hover:bg-emerald-50/90 text-emerald-700 hover:border-emerald-400'
-            }`}
-            title="Próximo cômodo"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className={`pixel-room room-${gameState.currentRoom} h-full relative`}>
-          {/* Room Background */}
-            <button
-              onClick={onBack}
-              className={`absolute left-0 p-2 rounded-full transition-all duration-200 hover:scale-110 ${
-                isDark 
-                  ? 'hover:bg-slate-800 text-white' 
-                  : 'hover:bg-emerald-100 text-emerald-900'
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            
-            {/* Título centralizado */}
-            <h1 className={`text-lg font-bold transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-emerald-900'
-            }`}>
-              Dream Story
-            </h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Game Area */}
-      <div className="relative h-[60vh] overflow-hidden pixel-game-container">
     </div>
   );
 };
