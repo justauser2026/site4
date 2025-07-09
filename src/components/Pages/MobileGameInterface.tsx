@@ -32,6 +32,9 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
   const { isDark } = useTheme();
   const { audioSettings, toggleMute, playButtonSound, playNavigationSound, playConsequenceSound } = useGameAudio();
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showPausePopup, setShowPausePopup] = useState(false);
+  const [showSavePopup, setShowSavePopup] = useState(false);
+  const [showResetPopup, setShowResetPopup] = useState(false);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
 
   const [gameState, setGameState] = useState<GameState>({
@@ -129,7 +132,14 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
 
   const togglePlayPause = () => {
     playButtonSound();
-    setGameState(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
+    if (gameState.isPlaying) {
+      // Se está jogando, pausar e mostrar popup
+      setGameState(prev => ({ ...prev, isPlaying: false }));
+      setShowPausePopup(true);
+    } else {
+      // Se está pausado, retomar o jogo
+      setGameState(prev => ({ ...prev, isPlaying: true }));
+    }
   };
 
   const changeGameSpeed = (speed: number) => {
@@ -139,6 +149,10 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
 
   const resetGame = () => {
     playButtonSound();
+    setShowResetPopup(true);
+  };
+
+  const confirmReset = () => {
     setGameState({
       day: 1,
       hour: 7,
@@ -159,17 +173,22 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
       achievements: [],
       totalScore: 0
     });
+    setShowResetPopup(false);
+  };
+
+  const cancelReset = () => {
+    setShowResetPopup(false);
   };
 
   const saveGame = () => {
     playButtonSound();
     localStorage.setItem('dream-story-save', JSON.stringify(gameState));
-    // Mostrar feedback visual de salvamento
-    const button = document.querySelector('.save-button');
-    if (button) {
-      button.classList.add('animate-pulse');
-      setTimeout(() => button.classList.remove('animate-pulse'), 1000);
-    }
+    setShowSavePopup(true);
+    
+    // Auto-fechar após 3 segundos
+    setTimeout(() => {
+      setShowSavePopup(false);
+    }, 3000);
   };
 
   const changeRoom = (room: GameState['currentRoom']) => {
@@ -306,6 +325,10 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
     setGameState(prev => ({ ...prev, isPlaying: true }));
   };
 
+  const handlePauseBack = () => {
+    setShowPausePopup(false);
+    setGameState(prev => ({ ...prev, isPlaying: true }));
+  };
   // Função para obter o dia da semana
   const getDayOfWeek = (day: number) => {
     const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -361,6 +384,142 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
     );
   }
 
+  // Pop-up de Pause
+  if (showPausePopup) {
+    return (
+      <div className={`min-h-screen transition-colors duration-300 ${
+        isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-white via-emerald-50/80 to-emerald-100/60'
+      }`}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className={`max-w-sm w-full rounded-2xl p-8 border shadow-2xl transition-colors duration-300 ${
+            isDark 
+              ? 'bg-slate-900/95 border-slate-700' 
+              : 'bg-white/95 border-emerald-200/50 shadow-emerald-500/10'
+          }`}>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Pause className="w-10 h-10 text-amber-400" />
+              </div>
+              
+              <h2 className={`text-2xl font-bold mb-4 transition-colors duration-300 ${
+                isDark ? 'text-white' : 'text-emerald-900'
+              }`}>
+                ⏸️ Jogo Pausado
+              </h2>
+              
+              <p className={`text-sm mb-8 leading-relaxed transition-colors duration-300 ${
+                isDark ? 'text-slate-300' : 'text-emerald-700'
+              }`}>
+                O tempo está parado. Clique em "Voltar" para continuar sua jornada no Dream Story!
+              </p>
+              
+              <button
+                onClick={handlePauseBack}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                Voltar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pop-up de Save
+  if (showSavePopup) {
+    return (
+      <div className={`min-h-screen transition-colors duration-300 ${
+        isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-white via-emerald-50/80 to-emerald-100/60'
+      }`}>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className={`max-w-sm w-full rounded-2xl p-8 border shadow-2xl transition-colors duration-300 animate-pulse ${
+            isDark 
+              ? 'bg-slate-900/95 border-slate-700' 
+              : 'bg-white/95 border-emerald-200/50 shadow-emerald-500/10'
+          }`}>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Save className="w-10 h-10 text-green-400" />
+              </div>
+              
+              <h2 className={`text-2xl font-bold mb-4 transition-colors duration-300 ${
+                isDark ? 'text-white' : 'text-emerald-900'
+              }`}>
+                💾 Jogo Salvo!
+              </h2>
+              
+              <p className={`text-sm leading-relaxed transition-colors duration-300 ${
+                isDark ? 'text-slate-300' : 'text-emerald-700'
+              }`}>
+                Seu progresso foi salvo com sucesso! ✅
+              </p>
+              
+              <div className="mt-6 flex items-center justify-center gap-2 text-green-400 text-sm">
+                <div className="w-4 h-4 border-2 border-green-400/30 border-t-green-400 rounded-full animate-spin"></div>
+                <span>Salvando automaticamente...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pop-up de Reset
+  if (showResetPopup) {
+    return (
+      <div className={`min-h-screen transition-colors duration-300 ${
+        isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-white via-emerald-50/80 to-emerald-100/60'
+      }`}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className={`max-w-md w-full rounded-2xl p-8 border shadow-2xl transition-colors duration-300 ${
+            isDark 
+              ? 'bg-slate-900/95 border-slate-700' 
+              : 'bg-white/95 border-emerald-200/50 shadow-emerald-500/10'
+          }`}>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <RotateCcw className="w-10 h-10 text-red-400" />
+              </div>
+              
+              <h2 className={`text-2xl font-bold mb-4 transition-colors duration-300 ${
+                isDark ? 'text-white' : 'text-emerald-900'
+              }`}>
+                ⚠️ Reiniciar Jogo?
+              </h2>
+              
+              <p className={`text-sm mb-8 leading-relaxed transition-colors duration-300 ${
+                isDark ? 'text-slate-300' : 'text-emerald-700'
+              }`}>
+                Você tem certeza que quer reiniciar o jogo? Todo o progresso será perdido e você voltará ao início da jornada.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={cancelReset}
+                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-colors ${
+                    isDark 
+                      ? 'bg-slate-800 hover:bg-slate-700 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                  }`}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmReset}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-medium transition-colors"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-white via-emerald-50/80 to-emerald-100/60'
