@@ -292,7 +292,7 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
       }
 
       return {
-        social: 70,
+        ...prev,
         energy: Math.max(0, Math.min(100, prev.energy + energyChange)),
         social: Math.max(0, Math.min(100, prev.social + socialChange)),
         health: Math.max(0, Math.min(100, prev.health + healthChange)),
@@ -786,13 +786,13 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
 
         <div className={`pixel-room room-${gameState.currentRoom} h-full relative`}>
           {/* Room Background */}
-          <div className={`w-full h-full flex items-center justify-center transition-colors duration-300 ${
+        <div className="grid grid-cols-4 gap-2">
             isDark ? 'bg-slate-800' : 'bg-emerald-100'
           }`}>
-            <div className={`text-center transition-colors duration-300 ${
+            <div className={`rounded-full h-2 transition-colors duration-300 ${
               isDark ? 'text-white' : 'text-emerald-900'
-            }`}>
-              <h2 className="text-2xl font-bold mb-4">{getRoomName(gameState.currentRoom)}</h2>
+                className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+            <div className={`text-xs mt-1 transition-colors duration-300 ${
               <p className="text-sm opacity-70">Interaja com os objetos do ambiente</p>
             </div>
           </div>
@@ -807,54 +807,54 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
                 💤 Dormir
               </button>
             </>
-          )}
+            <div className={`text-xs font-medium mb-1 transition-colors duration-300 ${
 
           {gameState.currentRoom === 'kitchen' && (
-            <>
+            <div className={`rounded-full h-2 transition-colors duration-300 ${
               <button
                 onClick={() => performAction('eat', 'food')}
                 className="absolute bottom-20 left-1/4 transform -translate-x-1/2 bg-green-500/80 hover:bg-green-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
-              >
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                 🍽️ Comer
               </button>
               <button
-                onClick={() => performAction('drinkWater', 'water')}
+            <div className={`text-xs mt-1 transition-colors duration-300 ${
                 className="absolute bottom-20 right-1/4 transform translate-x-1/2 bg-cyan-500/80 hover:bg-cyan-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
               >
                 💧 Beber Água
               </button>
             </>
           )}
-
+            <div className={`text-xs font-medium mb-1 transition-colors duration-300 ${
           {gameState.currentRoom === 'gym' && (
             <>
-              <button
+            <div className={`rounded-full h-2 transition-colors duration-300 ${
                 onClick={() => performAction('exercise', 'equipment')}
                 className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-red-500/80 hover:bg-red-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
               >
-                🏋️ Exercitar
+                className="bg-red-500 h-2 rounded-full transition-all duration-300"
               </button>
             </>
           )}
-
+            <div className={`text-xs mt-1 transition-colors duration-300 ${
           {gameState.currentRoom === 'living' && (
             <>
               <button
                 onClick={() => performAction('relax', 'sofa')}
                 className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-purple-500/80 hover:bg-purple-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
               >
-                🛋️ Relaxar
+            <div className={`text-xs font-medium mb-1 transition-colors duration-300 ${
               </button>
-            </>
-          )}
+            }`}>📈 Produtividade</div>
+            <div className={`rounded-full h-2 transition-colors duration-300 ${
 
           {gameState.currentRoom === 'bathroom' && (
             <>
-              <button
+                className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                 onClick={() => performAction('shower', 'shower')}
                 className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-indigo-500/80 hover:bg-indigo-600/90 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105"
               >
-                🚿 Tomar Banho
+            <div className={`text-xs mt-1 transition-colors duration-300 ${
               </button>
             </>
           )}
@@ -862,6 +862,6 @@ const MobileGameInterface: React.FC<MobileGameInterfaceProps> = ({ onBack }) => 
       </div>
     </div>
   );
-};
+      <div className="relative h-[60vh] overflow-hidden pixel-game-container">
 
 export default MobileGameInterface;
